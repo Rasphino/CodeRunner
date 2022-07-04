@@ -5,22 +5,17 @@ namespace CodeRunner.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class WeatherForecastController : ControllerBase
+public class CodeRunnerController : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
-        "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+    private readonly ILogger<CodeRunnerController> _logger;
 
-    private readonly ILogger<WeatherForecastController> _logger;
-
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
+    public CodeRunnerController(ILogger<CodeRunnerController> logger)
     {
         _logger = logger;
     }
 
-    [HttpGet(Name = "GetWeatherForecast")]
-    public IEnumerable<WeatherForecast> Get()
+    [HttpPost(Name = "GetWeatherForecast")]
+    public ActionResult<string> Post()
     {
         return Enumerable.Range(1, 5).Select(index => new WeatherForecast
         {

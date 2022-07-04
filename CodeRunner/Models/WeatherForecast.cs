@@ -1,4 +1,4 @@
-﻿namespace CodeRunner;
+﻿namespace CodeRunner.Models;
 
 public class WeatherForecast
 {

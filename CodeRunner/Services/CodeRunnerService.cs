@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Linq;
 
 namespace CodeRunner.Services
 {
@@ -16,13 +17,16 @@ namespace CodeRunner.Services
 
         public (string?, string?) RunPython(string scriptPath, params string[] scriptArgs)
         {
+            scriptArgs = scriptArgs.Select(x => $"\"{x}\"").ToArray();
             ProcessStartInfo start = new()
             {
-                FileName = "my/full/path/to/python.exe",
+                FileName = _pythonPath,
                 Arguments = $"{scriptPath} {String.Join(" ", scriptArgs)}",
                 UseShellExecute = false,
-                RedirectStandardOutput = true
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
             };
+            _logger.LogInformation("Process start info: ", start.Arguments);
 
             using Process? process = Process.Start(start);
             if (process is null) return (null, null);

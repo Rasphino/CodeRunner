@@ -1,10 +1,10 @@
 ﻿using System;
 namespace CodeRunner.Models;
 
-public class CodeRunnerModel
+public class RunCodeRequest
+
 {
-    public CodeRunnerModel()
-    {
-    }
+    public string? Code { get; set; }
+    public string? Lang { get; set; }
 }
 

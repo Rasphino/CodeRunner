@@ -11,9 +11,9 @@ public class CodeRunnerServiceTests
         using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
         var logger = loggerFactory.CreateLogger<CodeRunnerService>();
 
-        var service = new CodeRunnerService(logger, "/opt/homebrew/bin/python3");
-        var (outResult, errResult) = service.RunPython("/Users/rasp/repo/python/print_args.py", "1", "Hello world");
-        Assert.Equal("cmd entry: ['/Users/rasp/repo/python/print_args.py', '1', 'Hello world']\n", outResult);
+        var service = new CodeRunnerService(logger, @"C:\Users\t-honghaoli\AppData\Local\Microsoft\WindowsApps\python.exe");
+        var (outResult, errResult) = service.RunPython(@"D:\scripts\print_args.py", "1", "Hello world");
+        Assert.Equal("cmd args: ['1', 'Hello world']\r\n", outResult);
         Assert.Equal(String.Empty, errResult);
     }
 }

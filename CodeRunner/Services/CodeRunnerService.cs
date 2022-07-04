@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace CodeRunner.Services
 {
-    public class CodeRunnerService
+    public class CodeRunnerService : ICodeRunnerService
     {
         private readonly ILogger<CodeRunnerService> _logger;
         private readonly string _pythonPath;

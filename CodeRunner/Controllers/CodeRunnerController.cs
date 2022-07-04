@@ -1,5 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using CodeRunner.Models;
+using CodeRunner.Services;
+using System.Text;
 
 namespace CodeRunner.Controllers;
 
@@ -8,22 +11,36 @@ namespace CodeRunner.Controllers;
 public class CodeRunnerController : ControllerBase
 {
     private readonly ILogger<CodeRunnerController> _logger;
+    private readonly ICodeRunnerService _service;
+    private readonly string _scriptFolderPath;
 
-    public CodeRunnerController(ILogger<CodeRunnerController> logger)
+    public CodeRunnerController(ILogger<CodeRunnerController> logger, ICodeRunnerService service)
     {
         _logger = logger;
+        _service = service;
+
+        _scriptFolderPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "scripts");
+        // Create folder to store script files
+        Directory.CreateDirectory(_scriptFolderPath);
     }
 
-    [HttpPost(Name = "GetWeatherForecast")]
-    public ActionResult<string> Post()
+    [HttpPost(Name = "Python")]
+    public ActionResult<string> Post(RunCodeRequest req)
     {
-        return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        if (req.Code is null || req.Lang is null) return BadRequest("Missing code or lang");
+
+        _logger.LogInformation($"Received request: {JsonSerializer.Serialize(req)}");
+        var code = new UTF8Encoding(true).GetBytes(req.Code);
+
+        string scriptPath = Path.Combine(_scriptFolderPath, Guid.NewGuid().ToString());
+        using (FileStream fsDst = new(scriptPath, FileMode.CreateNew, FileAccess.Write))
         {
-            Date = DateTime.Now.AddDays(index),
-            TemperatureC = Random.Shared.Next(-20, 55),
-            Summary = Summaries[Random.Shared.Next(Summaries.Length)]
-        })
-        .ToArray();
+            fsDst.Write(code, 0, code.Length);
+        }
+
+        var outputs = _service.RunPython(scriptPath);
+        return Ok(outputs.Item1);
     }
+
 }
 
